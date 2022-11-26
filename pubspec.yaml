@@ -1,4 +1,4 @@
-name: package_name
+name: ast_builder
 description: A sample dart package from the template.
 version: 0.0.1
 repository: https://github.com/DrafaKiller/PackageName-dart
