@@ -4,22 +4,11 @@ import 'package:ast_builder/src/token/match.dart';
 class Token extends Pattern {
   final String? name;
   final Pattern pattern;
-
-  final Set<TokenMatchCallback> listeners;
   
-  Token(this.pattern, { this.name, Set<TokenMatchCallback>? listeners }) : listeners = listeners ?? <TokenMatchCallback>{};
+  Token(this.pattern, { this.name });
   
-  Token.regex(String string, { String? name, Set<TokenMatchCallback>? listeners })
-    : this(RegExp(string), name: name, listeners: listeners);
-
-  /* -= Broadcasting Methods =- */
-
-  T emit<T extends TokenMatch>(T match) {
-    for (var listener in listeners) {
-      listener(match);
-    }
-    return match;
-  }
+  Token.regex(String string, { String? name })
+    : this(RegExp(string), name: name);
 
   /* -= Pattern Methods =- */
 
@@ -34,9 +23,7 @@ class Token extends Pattern {
     final match = pattern.matchAsPrefix(string, start);
     if (match == null) return null;
     
-    final tokenMatch = TokenMatch(this, match);
-    emit(tokenMatch);
-    return tokenMatch;
+    return TokenMatch(this, match);
   }
 
   @override
@@ -49,12 +36,12 @@ class Token extends Pattern {
 
   /* -= Alternative Tokens =- */
 
-  factory Token.and(Pattern left, Pattern right, { String? name, Set<TokenMatchCallback>? listeners }) = AndToken;
-  factory Token.or(Pattern left, Pattern right, { String? name, Set<TokenMatchCallback>? listeners }) = OrToken;
-  factory Token.not(Pattern token, { String? name, Set<TokenMatchCallback>? listeners }) = NotToken;
-  factory Token.multiple(Pattern token, { String? name, Set<TokenMatchCallback>? listeners }) = MultipleToken;
-  factory Token.optional(Pattern token, { String? name, Set<TokenMatchCallback>? listeners }) = OptionalToken;
-  factory Token.full(Pattern token, { String? name, Set<TokenMatchCallback>? listeners }) = FullToken;
+  factory Token.and(Pattern left, Pattern right, { String? name }) = AndToken;
+  factory Token.or(Pattern left, Pattern right, { String? name }) = OrToken;
+  factory Token.not(Pattern token, { String? name }) = NotToken;
+  factory Token.multiple(Pattern token, { String? name }) = MultipleToken;
+  factory Token.optional(Pattern token, { String? name }) = OptionalToken;
+  factory Token.full(Pattern token, { String? name }) = FullToken;
   factory Token.empty() = EmptyToken;
 
   Token and(Token token) => Token.and(this, token);

@@ -27,6 +27,5 @@ extension TokenPattern on Pattern {
     return Token(name: name, this);
   }
 
-  Token bind(Token token) => this.token(token.name)
-    ..listeners.addAll(token.listeners);
+  Token bind(Token token) => this.token(token.name);
 }
