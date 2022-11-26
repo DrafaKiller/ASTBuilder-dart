@@ -1,6 +1,6 @@
 import 'package:ast_builder/src/token/element.dart';
 
-extension PatternTokenizer on Pattern {
+extension TokenPattern on Pattern {
   /* -= Token Build Methods =- */
 
   Token operator +(Pattern other) => this & other;
@@ -17,6 +17,8 @@ extension PatternTokenizer on Pattern {
   Token get multiple => Token.multiple(this);
   Token get multipleOrNone => Token.or(Token.multiple(this), Token.empty());
   Token get optional => Token.optional(this);
+  
+  Token get regex => Token.regex(toString());
 
   /* -= Token Binding =- */
 
@@ -27,9 +29,4 @@ extension PatternTokenizer on Pattern {
 
   Token bind(Token token) => this.token(token.name)
     ..listeners.addAll(token.listeners);
-}
-
-extension PatternTokenizerString on String {
-  /* -= Token Build Methods =- */
-  Token get regex => Token.regex(this);
 }

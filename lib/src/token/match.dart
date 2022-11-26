@@ -26,6 +26,11 @@ class TokenMatch<TokenT extends Token> extends Match {
       ... (match as TokenMatch).get(token)
     };
   }
+
+  Set<Match> get children => {
+    if (match is TokenMatchBound) ... (match as TokenMatchBound).children
+    else match,
+  };
 }
 
 class TokenMatchBound extends TokenMatch {
@@ -52,6 +57,7 @@ class TokenMatchBound extends TokenMatch {
     
   /* -= Analyzing Methods =- */
 
+  @override
   Set<TokenMatch<T>> get<T extends Token>(T token) => {
     if (match is TokenMatch) ... {
       if ((match as TokenMatch).token == token) match as TokenMatch<T>,
@@ -61,5 +67,12 @@ class TokenMatchBound extends TokenMatch {
       if ((match2 as TokenMatch).token == token) match2 as TokenMatch<T>,
       ... (match2 as TokenMatch).get(token)
     }
+  };
+
+  @override
+  Set<Match> get children => {
+    if (match is TokenMatchBound) ... (match as TokenMatchBound).children
+    else match,
+    match2,
   };
 }
