@@ -1,22 +1,22 @@
-# Package Name
+# AST Builder
 
-Package description...
+An intuitive AST Builder that includes syntax/grammar definition, tokenization, and parsing.
 
 ## Features
 
-- A list of features provided by the package
-- More...
+- Tokenization
+- ...
 
 ## Getting Started 
 
 ```
-dart pub add package_name
+dart pub add ast_builder
 ```
 
 And import the package:
 
 ```dart
-import 'package:package_name/package_name.dart';
+import 'package:ast_builder/ast_builder.dart';
 ```
 
 ## Usage
