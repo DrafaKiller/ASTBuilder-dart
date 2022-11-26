@@ -19,13 +19,11 @@ void main() {
 
   final main = (variableDeclaration | space).multiple;
 
-  final match = main.matchAsPrefix('''
+  final match = main.full.matchAsPrefix('''
     var hello = "world";
     var foo = 123;
     var bar = 123.456;
   ''');
-
-  print('Full Match: ${ match?.group(0) == match?.input ? 'Yes' : 'No' }\n');
   
   final numbers = match?.get(number).map((match) => match.group(0));
   final identifiers = match?.get(identifier).map((match) => '"${ match.group(0) }"');

@@ -54,6 +54,7 @@ class Token extends Pattern {
   factory Token.not(Pattern token, { String? name, Set<TokenMatchCallback>? listeners }) = NotToken;
   factory Token.multiple(Pattern token, { String? name, Set<TokenMatchCallback>? listeners }) = MultipleToken;
   factory Token.optional(Pattern token, { String? name, Set<TokenMatchCallback>? listeners }) = OptionalToken;
+  factory Token.full(Pattern token, { String? name, Set<TokenMatchCallback>? listeners }) = FullToken;
   factory Token.empty() = EmptyToken;
 
   Token and(Token token) => Token.and(this, token);
@@ -61,13 +62,14 @@ class Token extends Pattern {
   Token get not => Token.not(this);
   Token get multiple => Token.multiple(this);
   Token get multipleOrNone => Token.or(Token.multiple(this), Token.empty());
+  Token get full => Token.full(this);
   Token get optional => Token.optional(this);
 
-  Token get asBefore => Token('(?<=$this)');
-  Token get asNotBefore => Token('(?<!$this)');
+  Token get asBefore => Token.regex('(?<=$this)');
+  Token get asNotBefore => Token.regex('(?<!$this)');
   
-  Token get asAfter => Token('(?=$this)');
-  Token get asNotAfter => Token('(?!$this)');
+  Token get asAfter => Token.regex('(?=$this)');
+  Token get asNotAfter => Token.regex('(?!$this)');
 }
 
 typedef TokenMatchCallback = void Function(TokenMatch match);
