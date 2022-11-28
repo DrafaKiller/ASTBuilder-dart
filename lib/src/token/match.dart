@@ -6,6 +6,12 @@ class TokenMatch<TokenT extends Token> extends Match {
 
   TokenMatch(this.token, this.match);
 
+  /* -= Accessor Methods =- */
+
+  String get value => match.group(0) ?? '';
+
+  /* -= Overridden Methods =- */
+
   @override Pattern get pattern => token;
   @override String get input => match.input;
 
@@ -36,6 +42,9 @@ class TokenMatch<TokenT extends Token> extends Match {
 class TokenMatchBound extends TokenMatch {
   final Match match2;
   TokenMatchBound(super.token, super.match, this.match2);
+
+  Match get left => match;
+  Match get right => match2; 
   
   @override int get end => match2.end;
 
