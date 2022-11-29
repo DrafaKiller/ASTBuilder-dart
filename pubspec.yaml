@@ -1,7 +1,7 @@
-name: ast_builder
+name: ast_parser
 description: A sample dart package from the template.
 version: 0.0.1
-repository: https://github.com/DrafaKiller/PackageName-dart
+repository: https://github.com/DrafaKiller/ASTParser-dart
 
 publish_to: none
 

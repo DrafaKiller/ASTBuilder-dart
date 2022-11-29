@@ -1,4 +1,4 @@
-import 'package:ast_builder/src/token/element.dart';
+import 'package:ast_parser/src/token/element.dart';
 
 extension TokenPattern on Pattern {
   /* -= Token Build Methods =- */

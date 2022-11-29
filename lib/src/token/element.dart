@@ -1,38 +1,35 @@
-import 'package:ast_builder/src/token/alternatives.dart';
-import 'package:ast_builder/src/token/match.dart';
+import 'package:ast_parser/src/token/alternatives.dart';
+import 'package:ast_parser/src/token/match.dart';
 
-class Token extends Pattern {
+abstract class Token extends Pattern {
   final String? name;
-  final Pattern pattern;
   
-  Token(this.pattern, { this.name });
-  
-  Token.regex(String string, { String? name })
-    : this(RegExp(string), name: name);
+  Token({ this.name });
 
-  /* -= Pattern Methods =- */
+  /* -= Relation Methods =- */
 
   @override
-  Iterable<Match> allMatches(String string, [int start = 0]) {
+  bool operator ==(Object other) {
+    if (other is Token) {
+      if (name != null || other.name != null) return name == other.name;
+    }
+    return hashCode == other.hashCode;
+  }
+  
+  @override
+  int get hashCode => name.hashCode;
+
+  /* -= Pattern Methods =- */
+  
+  @override
+  Iterable<TokenMatch> allMatches(String string, [ int start = 0 ]) {
     final match = matchAsPrefix(string, start);
     return [ if (match != null) match ];
   }
-  
-  @override
-  TokenMatch? matchAsPrefix(String string, [int start = 0]) {
-    final match = pattern.matchAsPrefix(string, start);
-    if (match == null) return null;
-    
-    return TokenMatch(this, match);
-  }
 
   @override
-  String toString() => 
-    pattern is RegExp
-      ? (pattern as RegExp).pattern
-    : pattern is String
-      ? RegExp.escape(pattern as String)
-    : pattern.toString();
+  TokenMatch? matchAsPrefix(String string, [ int start = 0 ]) => match(string, start);
+  TokenMatch? match(String string, [ int start = 0 ]);
 
   /* -= Alternative Tokens =- */
 

@@ -1,4 +1,4 @@
-import 'package:ast_builder/src/token/match.dart';
+import 'package:ast_parser/src/token/match.dart';
 
 abstract class ASTNode {
   final ASTNode? parent;
