@@ -46,6 +46,10 @@ abstract class Token extends Pattern {
 
   factory Token.empty() = EmptyToken;
   factory Token.full(Pattern token, { String? name }) = FullToken;
+
+  factory Token.reference(String name) = ReferenceToken;
+  factory Token.ref(String name) = ReferenceToken;
+  factory Token.self() = SelfToken;
   
   /* -= Alternative Tokens - Methods =- */
 

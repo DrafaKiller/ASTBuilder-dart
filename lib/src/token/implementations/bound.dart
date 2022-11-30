@@ -1,4 +1,3 @@
-import 'package:ast_parser/src/token/element.dart';
 import 'package:ast_parser/src/token/implementations/parent.dart';
 
 class BoundToken<LeftPattern extends Pattern, RightPattern extends Pattern> extends ParentToken {

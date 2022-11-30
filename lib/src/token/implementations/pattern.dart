@@ -1,5 +1,4 @@
-import 'package:ast_parser/src/token/element.dart';
-import 'package:ast_parser/src/token/match.dart';
+import 'package:ast_parser/ast_parser.dart';
 
 class PatternToken<PatternT extends Pattern> extends Token {
   final PatternT pattern;
