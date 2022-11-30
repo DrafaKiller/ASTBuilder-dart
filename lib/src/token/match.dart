@@ -7,6 +7,7 @@ class TokenMatch<TokenT extends Token> extends Match {
 
   TokenMatch(this.token, this.match);
   TokenMatch.all(this.token, List<Match> matches) : match = ParentMatch(token, matches);
+  TokenMatch.emptyAt(this.token, String input, int index) : match = TokenMatch(token, ''.matchAsPrefix(input, index)!);
 
   /* -= Accessor Methods =- */
 
@@ -27,14 +28,18 @@ class TokenMatch<TokenT extends Token> extends Match {
 
   /* -= Analyzing Methods =- */
 
-  Set<TokenMatch<T>> get<T extends Token>(T token) {
-    if (match is! TokenMatch) return <TokenMatch<T>>{};
-    return {
-      if ((match as TokenMatch).token == token) match as TokenMatch<T>,
-      ... (match as TokenMatch).get(token)
-    };
-  }
+  Set<TokenMatch<T>> get<T extends Token>(T token, { bool shallow = false }) {
+    final matches = <TokenMatch<T>>{};
+    matches.addAll(children.whereType<TokenMatch<T>>().where((element) => element.token == token));
 
+    if (!shallow) {
+      for (final child in children) {
+        if (child is TokenMatch) matches.addAll(child.get(token, shallow: shallow));
+      }
+    }
+    return matches;
+  }
+  
   Set<Match> get children => {
     if (match is ParentMatch) ... (match as ParentMatch).children
     else match,

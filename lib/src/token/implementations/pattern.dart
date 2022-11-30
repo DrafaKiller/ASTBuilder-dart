@@ -5,7 +5,7 @@ class PatternToken<PatternT extends Pattern> extends Token {
   final PatternT pattern;
 
   PatternToken(this.pattern, { super.name });
-  static regex(String string, { String? name }) => PatternToken(RegExp(string), name: name);
+  static PatternToken<RegExp> regex(String string, { String? name }) => PatternToken(RegExp(string), name: name);
 
   /* -= Relation Methods =- */
   
@@ -26,7 +26,7 @@ class PatternToken<PatternT extends Pattern> extends Token {
   /* -= Pattern Methods =- */
   
   @override
-  TokenMatch<PatternToken>? match(String string, [ int start = 0 ]) {
+  TokenMatch<PatternToken<PatternT>>? match(String string, [ int start = 0 ]) {
     final match = pattern.matchAsPrefix(string, start);
     if (match == null) return null;
     
