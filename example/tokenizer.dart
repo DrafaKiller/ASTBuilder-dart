@@ -1,3 +1,4 @@
+import 'package:ast_parser/src/token/parser.dart';
 import 'package:ast_parser/tokenizer.dart';
 
 void main() {
@@ -17,9 +18,26 @@ void main() {
   final variableDeclaration =
     'var' & space & identifier & space.optional & '=' & space.optional & (number | string) & space.optional & (';' | space);
 
-  final main = (variableDeclaration | space).multiple;
+  final parser = Parser(
+    main: (variableDeclaration | space).multiple,
+    tokens: {
+      'whitespace': whitespace,
+      'lineBreak': lineBreak,
+      'space': space,
 
-  final match = main.full.matchAsPrefix('''
+      'letter': letter,
+      'digit': digit,
+
+      'identifier': identifier,
+
+      'number': number,
+      'string': string,
+
+      'variableDeclaration': variableDeclaration,
+    },
+  );
+
+  final match = parser.parse('''
     var hello = "world";
     var foo = 123;
     var bar = 123.456;
@@ -27,7 +45,7 @@ void main() {
   
   final numbers = match?.get(number).map((match) => match.group(0));
   final identifiers = match?.get(identifier).map((match) => '"${ match.group(0) }"');
-  
+
   print('Numbers: $numbers');
   print('Identifiers: $identifiers');
 }

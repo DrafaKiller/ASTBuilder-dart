@@ -4,16 +4,24 @@ import 'package:ast_parser/tokenizer.dart';
 import 'package:ast_parser/utils/iterable.dart';
 
 class Parser {
-  final Set<Token> tokens;
-  Parser({ Set<Token>? tokens }) : tokens = tokens ?? <Token>{};
+  final Set<Token> tokens = {};
+  Parser({ Map<String, Token>? tokens, Token? main }) {
+    if (tokens != null) addAll(tokens);
+    if (main != null) mainExpression = main;
+  }
 
-  void add(String name, Token token) => addToken(token.token(name));
-  void addAll(Map<String, Token> tokens) => tokens.forEach(add);
+  Token add(String name, Token token) {
+    final resolved = token.token(name);
+    addToken(resolved);
+    return resolved;
+  }
+
+  Set<Token> addAll(Map<String, Token> tokens) {
+    return tokens.entries.map((entry) => add(entry.key, entry.value)).toSet();
+  }
 
   void addToken(Token token) {
-    if (token is ReferenceToken) return;
     if (token.name == null) return;
-
     if (token is Navigable) {
       for (final reference in token.get<ReferenceToken>()) {
         reference.bind(this);
@@ -28,6 +36,9 @@ class Parser {
   Token? token(String name) => tokens.firstWhereOrNull((token) => token.name == name);
 
   Token? get mainExpression => token('(main)');
+  set mainExpression(Token? token) {
+    if (token != null) addMain(token);
+  }
   void addMain(Token token) => addTokens([ token, MainToken(token) ]);
 
   TokenMatch? parse(String input) => mainExpression?.match(input);
