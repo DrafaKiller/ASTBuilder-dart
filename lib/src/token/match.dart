@@ -39,6 +39,18 @@ class TokenMatch<TokenT extends Token> extends Match {
     }
     return matches;
   }
+
+  Set<TokenMatch<T>> getNamed<T extends Token>(String name, { bool shallow = false }) {
+    final matches = <TokenMatch<T>>{};
+    matches.addAll(children.whereType<TokenMatch<T>>().where((element) => element.token.name == name));
+
+    if (!shallow) {
+      for (final child in children) {
+        if (child is TokenMatch && child.token.name == name) matches.addAll(child.getNamed(name, shallow: shallow));
+      }
+    }
+    return matches;
+  }
   
   Set<Match> get children => {
     if (match is ParentMatch) ... (match as ParentMatch).children

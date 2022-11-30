@@ -1,3 +1,5 @@
+import 'package:ast_parser/src/token/implementations/main.dart';
+import 'package:ast_parser/src/token/navigation.dart';
 import 'package:ast_parser/tokenizer.dart';
 import 'package:ast_parser/utils/iterable.dart';
 
@@ -11,21 +13,22 @@ class Parser {
   void addToken(Token token) {
     if (token is ReferenceToken) return;
     if (token.name == null) return;
+
+    if (token is Navigable) {
+      for (final reference in token.get<ReferenceToken>()) {
+        reference.bind(this);
+        if (reference.referenceName == '(self)') reference.referenceToken = token;
+      }
+    }
+
     tokens.add(token);
   }
+  void addTokens(Iterable<Token> tokens) => tokens.forEach(addToken);
 
   Token? token(String name) => tokens.firstWhereOrNull((token) => token.name == name);
-  Token ensureToken(String? name) => (name != null ? token(name) : null) ?? (throw ReferenceTokenNotFoundError(name));
 
   Token? get mainExpression => token('(main)');
-  void addMain(Token token) => add('(main)', token);
+  void addMain(Token token) => addTokens([ token, MainToken(token) ]);
 
-  Pattern resolve(Pattern pattern) {
-    
-  }
-
-  TokenMatch? parse(String input) {
-    final resolved = resolve(mainExpression!);
-    return mainExpression?.match(input);
-  }
+  TokenMatch? parse(String input) => mainExpression?.match(input);
 }

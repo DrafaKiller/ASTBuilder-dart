@@ -1,4 +1,5 @@
 import 'package:ast_parser/src/token/element.dart';
+import 'package:ast_parser/src/token/implementations/reference.dart';
 import 'package:ast_parser/src/token/match.dart';
 
 extension TokenPattern on Pattern {
@@ -32,7 +33,7 @@ extension TokenPattern on Pattern {
   /* -= Token Binding =- */
 
   Token token([ String? name ]) {
-    if (this is! Token) return Token.pattern(this, name: name);
+    if (this is! Token || this is ReferenceToken) return Token.pattern(this, name: name);
     final token = this as Token;
     if (name == null) return token;
     token.name = name;

@@ -4,10 +4,10 @@ import 'package:ast_parser/tokenizer.dart';
 void main() {
   var parser = Parser();
 
-  final expression = 'a' | Token.reference('expression');
+  final expression = 'a' & Token.self().optional;
 
-  parser.addToken(expression.token('expression'));
+  parser.addMain(expression.token('expression'));
 
-  var result = parser.parse('a');
-  print(result);
+  var result = parser.parse('aaa');
+  print(result?.get(expression));
 }

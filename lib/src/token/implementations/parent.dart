@@ -1,7 +1,9 @@
 import 'package:ast_parser/src/token/element.dart';
 import 'package:ast_parser/src/token/match.dart';
+import 'package:ast_parser/src/token/navigation.dart';
 
-class ParentToken<PatternT extends Pattern> extends Token {
+class ParentToken<PatternT extends Pattern> extends Token with Navigable {
+  @override
   final List<PatternT> children;
 
   ParentToken(this.children, { super.name });
