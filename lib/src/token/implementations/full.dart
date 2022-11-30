@@ -1,4 +1,3 @@
-import 'package:ast_parser/src/token/element.dart';
 import 'package:ast_parser/src/token/implementations/pattern.dart';
 import 'package:ast_parser/src/token/match.dart';
 

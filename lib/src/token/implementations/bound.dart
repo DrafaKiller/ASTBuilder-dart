@@ -1,4 +1,3 @@
-import 'package:ast_parser/src/token/element.dart';
 import 'package:ast_parser/src/token/implementations/parent.dart';
 
 class BoundToken<LeftPattern extends Pattern, RightPattern extends Pattern> extends ParentToken {
@@ -6,4 +5,7 @@ class BoundToken<LeftPattern extends Pattern, RightPattern extends Pattern> exte
   final RightPattern right;
 
   BoundToken(this.left, this.right, { super.name }) : super([ left, right ]);
+
+  @override
+  String toString() => '(?:$left$right)';
 }

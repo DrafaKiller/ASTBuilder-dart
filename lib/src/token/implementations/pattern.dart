@@ -1,7 +1,7 @@
-import 'package:ast_parser/src/token/element.dart';
-import 'package:ast_parser/src/token/match.dart';
+import 'package:ast_parser/ast_parser.dart';
+import 'package:ast_parser/src/token/navigation.dart';
 
-class PatternToken<PatternT extends Pattern> extends Token {
+class PatternToken<PatternT extends Pattern> extends Token with Navigable {
   final PatternT pattern;
 
   PatternToken(this.pattern, { super.name });
@@ -22,6 +22,10 @@ class PatternToken<PatternT extends Pattern> extends Token {
   
   @override
   int get hashCode => name.hashCode ^ pattern.hashCode;
+
+  
+  @override
+  List<Pattern> get children => [ pattern ];
 
   /* -= Pattern Methods =- */
   
