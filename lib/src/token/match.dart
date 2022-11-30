@@ -1,10 +1,19 @@
-import 'package:ast_builder/src/token/element.dart';
+import 'package:ast_parser/src/token/element.dart';
+import 'package:ast_parser/utils/iterable.dart';
 
 class TokenMatch<TokenT extends Token> extends Match {
   final TokenT token;
   final Match match;
 
   TokenMatch(this.token, this.match);
+  TokenMatch.all(this.token, List<Match> matches) : match = ParentMatch(token, matches);
+  TokenMatch.emptyAt(this.token, String input, int index) : match = TokenMatch(token, ''.matchAsPrefix(input, index)!);
+
+  /* -= Accessor Methods =- */
+
+  String get value => match.group(0) ?? '';
+
+  /* -= Overridden Methods =- */
 
   @override Pattern get pattern => token;
   @override String get input => match.input;
@@ -19,60 +28,45 @@ class TokenMatch<TokenT extends Token> extends Match {
 
   /* -= Analyzing Methods =- */
 
-  Set<TokenMatch<T>> get<T extends Token>(T token) {
-    if (match is! TokenMatch) return <TokenMatch<T>>{};
-    return {
-      if ((match as TokenMatch).token == token) match as TokenMatch<T>,
-      ... (match as TokenMatch).get(token)
-    };
-  }
+  Set<TokenMatch<T>> get<T extends Token>(T token, { bool shallow = false }) {
+    final matches = <TokenMatch<T>>{};
+    matches.addAll(children.whereType<TokenMatch<T>>().where((element) => element.token == token));
 
+    if (!shallow) {
+      for (final child in children) {
+        if (child is TokenMatch) matches.addAll(child.get(token, shallow: shallow));
+      }
+    }
+    return matches;
+  }
+  
   Set<Match> get children => {
-    if (match is TokenMatchBound) ... (match as TokenMatchBound).children
+    if (match is ParentMatch) ... (match as ParentMatch).children
     else match,
   };
 }
 
-class TokenMatchBound extends TokenMatch {
-  final Match match2;
-  TokenMatchBound(super.token, super.match, this.match2);
-  
-  @override int get end => match2.end;
+class ParentMatch<PatternT extends Pattern> extends Match {
+  @override final PatternT pattern;
+  final List<Match> children;
 
-  @override String? operator [](int group) {
-    if (group == 0) return match.input.substring(start, end);
-    if (group <= match.groupCount) return match[group];
-    return match2[group - match.groupCount];
-  }
+  ParentMatch(this.pattern, this.children);
   
+  @override String get input => (children.isNotEmpty ? children.first : null)?.input ?? '';
+
+  @override int get start => children.firstOrNull?.start ?? 0;
+  @override int get end => children.lastOrNull?.end ?? 0;
+  
+  @override String? operator [](int group) => this.group(group);
   @override String? group(int group) {
-    if (group == 0) return match.input.substring(start, end);
-    if (group <= match.groupCount) return match.group(group);
-    return match2.group(group - match.groupCount);
+    if (group == 0) return input.substring(start, end);
+    for (final child in children) {
+      if (group <= child.groupCount) return child.group(group);
+      group -= child.groupCount;
+    }
+    return null;
   }
   
-  @override int get groupCount => match.groupCount + match2.groupCount;
-  @override List<String?> groups(List<int> groupIndices) =>
-    groupIndices.map((group) => this.group(group)).toList();
-    
-  /* -= Analyzing Methods =- */
-
-  @override
-  Set<TokenMatch<T>> get<T extends Token>(T token) => {
-    if (match is TokenMatch) ... {
-      if ((match as TokenMatch).token == token) match as TokenMatch<T>,
-      ... (match as TokenMatch).get(token)
-    },
-    if (match2 is TokenMatch) ... {
-      if ((match2 as TokenMatch).token == token) match2 as TokenMatch<T>,
-      ... (match2 as TokenMatch).get(token)
-    }
-  };
-
-  @override
-  Set<Match> get children => {
-    if (match is TokenMatchBound) ... (match as TokenMatchBound).children
-    else match,
-    match2,
-  };
+  @override int get groupCount => children.fold(0, (value, element) => value + element.groupCount);
+  @override List<String?> groups(List<int> groupIndices) => groupIndices.map((group) => this.group(group)).toList();
 }

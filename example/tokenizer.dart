@@ -1,4 +1,4 @@
-import 'package:ast_builder/tokenizer.dart';
+import 'package:ast_parser/tokenizer.dart';
 
 void main() {
   final whitespace = ' ' | '\t';

@@ -1,2 +1,2 @@
-export 'package:ast_builder/src/token/element.dart';
-export 'package:ast_builder/src/token/pattern.dart';
+export 'package:ast_parser/src/token/element.dart';
+export 'package:ast_parser/src/token/pattern.dart';

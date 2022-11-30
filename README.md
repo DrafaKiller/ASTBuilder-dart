@@ -1,6 +1,6 @@
-# AST Builder
+# AST Parser
 
-An intuitive AST Builder that includes syntax/grammar definition, tokenization, and parsing.
+An intuitive AST Parser that includes syntax/grammar definition, tokenization, parsing, compilation and evaluation.
 
 ## Features
 
@@ -9,22 +9,27 @@ An intuitive AST Builder that includes syntax/grammar definition, tokenization, 
 ## Getting Started 
 
 ```
-dart pub add ast_builder
+dart pub add ast_parser
 ```
 
 And import the package:
 
 ```dart
-import 'package:ast_builder/ast_builder.dart';
+import 'package:ast_parser/ast_parser.dart';
 ```
 
 ## Example
 
 <details>
-  <summary><code>example/main.dart</code></summary>
+  <summary>
+    Tokenization
+    <a href="https://github.com/DrafaKiller/ASTParser-dart/blob/dev/example/tokenizer.dart">
+      <code>(example/tokenizer.dart)</code>
+    </a>
+  </summary>
     
   ```dart
-  import 'package:ast_builder/ast_builder.dart';
+  import 'package:ast_parser/ast_parser.dart';
 
   void main() {
     final whitespace = ' ' | '\t';

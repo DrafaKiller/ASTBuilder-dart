@@ -1,54 +1,61 @@
-import 'package:ast_builder/src/token/alternatives.dart';
-import 'package:ast_builder/src/token/match.dart';
+import 'package:ast_parser/src/token/match.dart';
 
-class Token extends Pattern {
-  final String? name;
-  final Pattern pattern;
-  
-  Token(this.pattern, { this.name });
-  
-  Token.regex(String string, { String? name })
-    : this(RegExp(string), name: name);
+import 'package:ast_parser/tokens.dart';
 
-  /* -= Pattern Methods =- */
+abstract class Token extends Pattern {
+  String? name;
+  Token({ this.name });
+
+  /* -= Relation Methods =- */
 
   @override
-  Iterable<Match> allMatches(String string, [int start = 0]) {
+  bool operator ==(Object other) {
+    if (other is Token) {
+      if (name != null || other.name != null) return name == other.name;
+    }
+    return hashCode == other.hashCode;
+  }
+  
+  @override
+  int get hashCode => name.hashCode;
+
+  /* -= Pattern Methods =- */
+  
+  @override
+  Iterable<TokenMatch> allMatches(String string, [ int start = 0 ]) {
     final match = matchAsPrefix(string, start);
     return [ if (match != null) match ];
   }
+
+  @override
+  TokenMatch? matchAsPrefix(String string, [ int start = 0 ]) => match(string, start);
+  TokenMatch? match(String string, [ int start = 0 ]);
+
+  /* -= Alternative Tokens - Factories =- */
+
+  factory Token.pattern(Pattern pattern, { String? name }) = PatternToken;
+  factory Token.string(String string, { String? name }) = PatternToken;
+  factory Token.regex(String string, { String? name }) => PatternToken.regex(string, name: name);
   
-  @override
-  TokenMatch? matchAsPrefix(String string, [int start = 0]) {
-    final match = pattern.matchAsPrefix(string, start);
-    if (match == null) return null;
-    
-    return TokenMatch(this, match);
-  }
-
-  @override
-  String toString() => 
-    pattern is RegExp
-      ? (pattern as RegExp).pattern
-    : pattern is String
-      ? RegExp.escape(pattern as String)
-    : pattern.toString();
-
-  /* -= Alternative Tokens =- */
-
   factory Token.and(Pattern left, Pattern right, { String? name }) = AndToken;
   factory Token.or(Pattern left, Pattern right, { String? name }) = OrToken;
   factory Token.not(Pattern token, { String? name }) = NotToken;
-  factory Token.multiple(Pattern token, { String? name }) = MultipleToken;
+
+  factory Token.multiple(Pattern token, { String? name, bool orNone }) = MultipleToken;
   factory Token.optional(Pattern token, { String? name }) = OptionalToken;
-  factory Token.full(Pattern token, { String? name }) = FullToken;
+
   factory Token.empty() = EmptyToken;
+  factory Token.full(Pattern token, { String? name }) = FullToken;
+  
+  /* -= Alternative Tokens - Methods =- */
 
   Token and(Token token) => Token.and(this, token);
   Token or(Token token) => Token.or(this, token);
   Token get not => Token.not(this);
+
   Token get multiple => Token.multiple(this);
-  Token get multipleOrNone => Token.or(Token.multiple(this), Token.empty());
+  Token get multipleOrNone => Token.multiple(this, orNone: true);
+
   Token get full => Token.full(this);
   Token get optional => Token.optional(this);
 
